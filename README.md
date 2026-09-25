@@ -44,6 +44,7 @@ make check          # formatting, vet, Go tests, WASM bridge test, typecheck, pr
 make test-browser   # Playwright, desktop and phone (npx playwright install chromium first)
 make test-webkit    # Playwright on WebKit at iPhone size (npx playwright install webkit first)
 make preview        # serve the production build, under the production CSP
+make share-card     # re-render the link-preview card and home-screen icon into public/
 ```
 
 ## Hosting
@@ -52,6 +53,8 @@ make preview        # serve the production build, under the production CSP
 
 - **Content-Security-Policy:** the value in [`deploy/content-security-policy.txt`](deploy/content-security-policy.txt). `make preview` sends it too, so the browser tests run under it.
 - **Content type:** `engine.wasm` as `application/wasm`.
+
+A shared link unfurls into a card (Open Graph and Twitter tags in `index.html`) showing `public/og-image.png`. Those tags name the production URL, since link scrapers need absolute URLs. The card and `public/apple-touch-icon.png` are rendered from the built site by `make share-card` and committed; re-render them, check them by eye, and commit when the site's look changes.
 
 ## Project map
 
