@@ -8,7 +8,14 @@ test("@smoke the Library opens and a book can be read", async ({ page }) => {
   const found = problems(page);
   const wasm = page.waitForResponse((r) => r.url().endsWith("/engine.wasm"));
   await arrive(page);
-  expect((await wasm).headers()["content-type"]).toBe("application/wasm");
+  const engine = (await wasm).headers();
+  expect(engine["content-type"]).toBe("application/wasm");
+  // CloudFront compresses engine.wasm to about a quarter of its size, choosing
+  // Brotli or gzip per browser. If a distribution setting or the object's content
+  // type changes, it would silently ship uncompressed; vite preview never
+  // compresses, so this only applies to a deployed site.
+  if (process.env.BASE_URL)
+    expect(["br", "gzip"]).toContain(engine["content-encoding"]);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
     "You are dead.",
   );
