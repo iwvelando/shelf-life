@@ -53,7 +53,9 @@ test("searching raises the tally but never the fraction", async ({ page }) => {
   await expect
     .poll(async () => count(await page.locator("#search-tally").textContent()))
     .toBeGreaterThan(first);
-  await expect(page.locator("#search-fraction")).toContainText("(1,918,66");
+  // The run of zeros shrinks as the tally grows (1,918,660 up to ~14,800 books,
+  // 1,918,659 beyond), so assert only its leading digits.
+  await expect(page.locator("#search-fraction")).toContainText("(1,918,6");
   await expect(page.locator("#hud-examined")).not.toHaveText("0");
 });
 
