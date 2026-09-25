@@ -27,11 +27,15 @@ assert.deepEqual(
 );
 
 // A located text sits where it says, on the page its address holds.
-const found = call({ action: "locate", text: "Wyatt Earp", mode: "noise" });
-assert.equal(found.spelling.text, "uuiatt earp");
+const found = call({
+  action: "locate",
+  text: "Wyatt Earp, 1848",
+  mode: "noise",
+});
+assert.equal(found.spelling.text, "wyatt earp, one eight four eight");
 assert.equal(
   found.lines.join("").slice(found.offset, found.offset + found.length),
-  "uuiatt earp",
+  "wyatt earp, one eight four eight",
 );
 assert.deepEqual(
   call({ action: "page", location: found.location }).lines,

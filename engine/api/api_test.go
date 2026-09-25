@@ -18,7 +18,7 @@ func call(t *testing.T, req string) map[string]any {
 
 func TestConstants(t *testing.T) {
 	out := call(t, `{"action":"constants"}`)
-	if out["bookDigits"].(float64) != 1_834_098 {
+	if out["bookDigits"].(float64) != 1_918_667 {
 		t.Fatalf("constants = %v", out)
 	}
 }
@@ -41,10 +41,10 @@ func TestRandomPageThenTheSamePageByAddress(t *testing.T) {
 
 func TestLocate(t *testing.T) {
 	out := call(t, `{"action":"locate","text":"Wyatt","mode":"blank"}`)
-	if out["spelling"].(map[string]any)["text"] != "uuiatt" {
+	if out["spelling"].(map[string]any)["text"] != "wyatt" {
 		t.Fatalf("locate = %v", out)
 	}
-	if !strings.HasPrefix(out["lines"].([]any)[0].(string), "uuiatt ") {
+	if !strings.HasPrefix(out["lines"].([]any)[0].(string), "wyatt ") {
 		t.Fatalf("first line = %v", out["lines"].([]any)[0])
 	}
 }

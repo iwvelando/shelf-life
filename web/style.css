@@ -242,7 +242,7 @@ h2::before {
   font-size: 0.95rem;
 }
 
-/* Figures can outrun a phone's width ("0.000000000000…(1,834,091 zeros)…1"), so
+/* Figures can outrun a phone's width ("0.000000000000…(1,918,660 zeros)…1"), so
    they may break anywhere rather than push the page sideways. */
 .figure {
   overflow-wrap: anywhere;

@@ -10,7 +10,7 @@ test("the arrival states the size of the Library before the engine loads", async
   page,
 }) => {
   await page.goto("/");
-  await expect(page.locator("#look")).toContainText("× 10^1,834,097 books");
+  await expect(page.locator("#look")).toContainText("× 10^1,918,666 books");
   await expect(page.locator("#shaft")).toBeVisible();
   const before = await page.locator("#look-view").textContent();
   await page.getByRole("button", { name: "Look around" }).click();
@@ -25,7 +25,7 @@ test("reading pulls a real page and turning it moves to the next page", async ({
   const lines = page.locator("#read-page .page-line");
   await expect(lines).toHaveCount(40);
   for (const line of await lines.allTextContents())
-    expect(line).toMatch(/^[a-v ,.]{80}$/);
+    expect(line).toMatch(/^[a-z ,.]{80}$/);
   const hexagon = await page.locator("#read-location .hexagon").textContent();
   expect(hexagon?.replace(/\D/g, "").length).toBeGreaterThan(4000);
   const first = await pageText(page, "#read-page");
@@ -53,18 +53,22 @@ test("searching raises the tally but never the fraction", async ({ page }) => {
   await expect
     .poll(async () => count(await page.locator("#search-tally").textContent()))
     .toBeGreaterThan(first);
-  await expect(page.locator("#search-fraction")).toContainText("(1,834,09");
+  await expect(page.locator("#search-fraction")).toContainText("(1,918,66");
   await expect(page.locator("#hud-examined")).not.toHaveText("0");
 });
 
-test("finding a name spells it the Library's way and the address checks out", async ({
+test("finding a text spells it the Library's way and the address checks out", async ({
   page,
 }) => {
   await arrive(page);
-  await page.getByLabel("Text to find").fill("Wyatt");
+  await page.getByLabel("Text to find").fill("Wyatt Earp, 1848");
   await page.getByRole("button", { name: "Find it" }).click();
-  await expect(page.locator("#find-page mark")).toHaveText("uuiatt");
-  await expect(page.locator("#find-spelling")).toContainText("uuiatt");
+  const spelled = "wyatt earp, one eight four eight";
+  await expect(page.locator("#find-page mark")).toHaveText(spelled);
+  await expect(page.locator("#find-spelling")).toContainText(spelled);
+  await expect(page.locator("#find-spelling")).toContainText(
+    "numbers out in words",
+  );
   const digits = (
     await page.locator("#find-location .hexagon").textContent()
   )?.replace(/\D/g, "").length;
@@ -78,7 +82,7 @@ test("finding a name spells it the Library's way and the address checks out", as
   await page.getByRole("button", { name: "Find it" }).click();
   await expect
     .poll(() => pageText(page, "#find-page"))
-    .toBe("uuiatt" + " ".repeat(3194));
+    .toBe(spelled + " ".repeat(3200 - spelled.length));
 });
 
 test("text that can't be spelled is explained, not searched", async ({
@@ -97,14 +101,14 @@ test("reckoning: presets and sliders barely move the exponent", async ({
   await page
     .getByRole("button", { name: /Every atom, once every Planck/ })
     .click();
-  await expect(page.locator("#reckon-seconds")).toContainText("10^1,833,97");
+  await expect(page.locator("#reckon-seconds")).toContainText("10^1,918,54");
   await expect(page.locator("#reckon-removed")).toContainText("123");
   await expect(page.locator("#exponent-bar")).toBeVisible();
   await page.getByLabel("Searchers").fill("0");
   await page.getByLabel("Books each checks per second").fill("0");
-  await expect(page.locator("#reckon-seconds")).toContainText("10^1,834,097");
+  await expect(page.locator("#reckon-seconds")).toContainText("10^1,918,666");
   await expect(page.locator("#reckon-fraction")).toContainText("zeros");
-  await expect(page.locator("#library-cube")).toContainText("10^611,364");
+  await expect(page.locator("#library-cube")).toContainText("10^639,554");
 });
 
 test("falling changes nothing but the tally", async ({ page }) => {

@@ -15,9 +15,14 @@ func seeded(n uint64) *rand.ChaCha8 {
 	return rand.NewChaCha8(seed)
 }
 
-func TestAlphabetHas25DistinctSymbols(t *testing.T) {
-	if len(Alphabet) != 25 {
-		t.Fatalf("Alphabet has %d symbols, want 25", len(Alphabet))
+func TestAlphabetHas29DistinctSymbols(t *testing.T) {
+	if len(Alphabet) != 29 {
+		t.Fatalf("Alphabet has %d symbols, want 29", len(Alphabet))
+	}
+	for c := 'a'; c <= 'z'; c++ {
+		if !strings.ContainsRune(Alphabet, c) {
+			t.Errorf("Alphabet lacks %q", c)
+		}
 	}
 	seen := map[byte]bool{}
 	for i := 0; i < len(Alphabet); i++ {
@@ -41,12 +46,13 @@ func TestSpell(t *testing.T) {
 	cases := []struct {
 		in, want string
 	}{
-		{"hello, world.", "hello, uuorld."},
+		{"hello, world.", "hello, world."},
 		{"Isaac Velando", "isaac velando"},
-		{"Zoe!", "soe."},
-		{"x-ray", "csrai"},
+		{"I was born on", "i was born on"},
+		{"Zoe!", "zoe."},
+		{"x-ray", "xray"},
 		{"agent 7", "agent seven"},
-		{"line\tone\ntwo", "line one tuuo"},
+		{"line\tone\n2", "line one two"},
 		{"café", "caf"},
 	}
 	for _, c := range cases {
@@ -57,7 +63,7 @@ func TestSpell(t *testing.T) {
 }
 
 func TestSpellReportsChanges(t *testing.T) {
-	s := Spell("Wyatt é")
+	s := Spell("Wyatt é 2 2?")
 	if len(s.Changes) == 0 {
 		t.Fatal("Spell should report substitutions")
 	}
@@ -66,14 +72,19 @@ func TestSpellReportsChanges(t *testing.T) {
 		saw = append(saw, c.From+">"+c.To)
 	}
 	joined := strings.Join(saw, " ")
-	for _, want := range []string{"w>uu", "y>i", "é>"} {
+	for _, want := range []string{"2>two", "?>.", "é>"} {
 		if !strings.Contains(joined, want) {
 			t.Errorf("changes %q missing %q", joined, want)
 		}
 	}
 	// Each distinct change is reported once, and case changes are not reported.
-	if strings.Count(joined, "w>uu") != 1 {
-		t.Errorf("changes %q repeat w>uu", joined)
+	if strings.Count(joined, "2>two") != 1 {
+		t.Errorf("changes %q repeat 2>two", joined)
+	}
+	for _, c := range s.Changes {
+		if c.From >= "a" && c.From <= "z" {
+			t.Errorf("letter %q was respelled", c.From)
+		}
 	}
 }
 
@@ -120,7 +131,7 @@ func TestPageRoundTrip(t *testing.T) {
 	for i := 0; i < 50; i++ {
 		var b strings.Builder
 		for j := 0; j < PageChars; j++ {
-			b.WriteByte(Alphabet[r.Uint64()%25])
+			b.WriteByte(Alphabet[r.Uint64()%uint64(len(Alphabet))])
 		}
 		page := b.String()
 		loc, err := LocationOf(page)
@@ -152,13 +163,13 @@ func TestRandomLocationRanges(t *testing.T) {
 }
 
 func TestHexagonNumbersAreAsLongAsAPage(t *testing.T) {
-	// 25^3200 pages / 262,400 pages per hexagon: the largest hexagon number has
-	// 4,468 decimal digits, longer than the 3,200 characters of the page itself.
-	if got := len(MaxHexagon().String()); got != 4468 {
-		t.Fatalf("max hexagon has %d digits, want 4468", got)
+	// 29^3200 pages / 262,400 pages per hexagon: the largest hexagon number has
+	// 4,675 decimal digits, longer than the 3,200 characters of the page itself.
+	if got := len(MaxHexagon().String()); got != 4675 {
+		t.Fatalf("max hexagon has %d digits, want 4675", got)
 	}
-	if HexagonDigits != 4468 {
-		t.Fatalf("HexagonDigits = %d, want 4468", HexagonDigits)
+	if HexagonDigits != 4675 {
+		t.Fatalf("HexagonDigits = %d, want 4675", HexagonDigits)
 	}
 }
 
@@ -175,8 +186,8 @@ func TestAdjacentPagesAreUnrelated(t *testing.T) {
 			same++
 		}
 	}
-	// Unrelated pages agree at about 1 position in 25 (128 of 3,200).
-	if same > 250 {
+	// Unrelated pages agree at about 1 position in 29 (110 of 3,200).
+	if same > 220 {
 		t.Fatalf("adjacent pages share %d of %d positions", same, PageChars)
 	}
 }
@@ -216,7 +227,7 @@ func TestPageAtRejectsImpossibleLocations(t *testing.T) {
 }
 
 func TestLastHexagonIsOnlyPartlyShelved(t *testing.T) {
-	// 25^3200 is not a multiple of 262,400, so the final hexagon's later pages
+	// 29^3200 is not a multiple of 262,400, so the final hexagon's later pages
 	// do not exist.
 	loc := Location{Hexagon: MaxHexagon(), Wall: Walls - 1, Shelf: Shelves - 1, Volume: Volumes - 1, Page: Pages - 1}
 	if _, err := PageAt(loc); err == nil {
@@ -232,7 +243,7 @@ func TestLocationOfRejectsBadPages(t *testing.T) {
 	if _, err := LocationOf("too short"); err == nil {
 		t.Error("accepted a short page")
 	}
-	if _, err := LocationOf(strings.Repeat("w", PageChars)); err == nil {
+	if _, err := LocationOf(strings.Repeat("W", PageChars)); err == nil {
 		t.Error("accepted out-of-alphabet characters")
 	}
 }
@@ -313,11 +324,11 @@ func TestLocateRejects(t *testing.T) {
 }
 
 func TestLocateSpellsBeforePlacing(t *testing.T) {
-	found, err := Locate("Wyatt", Blank, seeded(12))
+	found, err := Locate("Wyatt 3", Blank, seeded(12))
 	if err != nil {
 		t.Fatal(err)
 	}
-	if found.Spelling.Text != "uuiatt" || found.Length != 6 {
+	if found.Spelling.Text != "wyatt three" || found.Length != 11 {
 		t.Fatalf("spelled %q (len %d)", found.Spelling.Text, found.Length)
 	}
 }

@@ -8,7 +8,7 @@ The site is one long page; the room links (a rail on wide screens, a dock at the
 
 **Search.** _Check a shelf_ checks a few thousand books. Hold the button to keep checking. Your tally climbs; the share of the Library seen does not visibly change, and the lenses show why.
 
-**Find.** Write anything up to a page long, and choose whether it sits among noise or on an otherwise blank page. _Find it_ shows the page and its location. Letters and marks the Library lacks are respelled, and you're told how. _Look it up_ asks the Library for the page at that location, to show it's the same page. The same text amid noise lands somewhere new each time, because the noise around it differs; on a blank page it always lands in the same place.
+**Find.** Write anything up to a page long, and choose whether it sits among noise or on an otherwise blank page. _Find it_ shows the page and its location. Digits are written out as words and marks the Library lacks are replaced or dropped, and you're told how. _Look it up_ asks the Library for the page at that location, to show it's the same page. The same text amid noise lands somewhere new each time, because the noise around it differs; on a blank page it always lands in the same place.
 
 **Reckon.** Pick a search party, or set the dials yourself in powers of ten: searchers, books each checks per second, and years searching. The figures show how long reading every book would take, how many digits the effort removes from that wait, and what share of the Library the party would see in the years given.
 

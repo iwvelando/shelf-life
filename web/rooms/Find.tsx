@@ -117,9 +117,13 @@ export function Find({ engine, ready }: RoomProps) {
 function spellingNote(text: string, changes: { from: string; to: string }[]) {
   if (changes.length === 0)
     return `Spelled exactly as you wrote it: “${text}”.`;
-  const letters = changes.filter((c) => /\p{L}/u.test(c.from) && c.to !== "");
-  const lacks = letters.length
-    ? `The Library has no ${letters.map((c) => c.from).join(", ")}.`
-    : "The Library can't write every mark you used.";
-  return `${lacks} It writes your text as “${text}”.`;
+  const numbers = changes.some((c) => /\d/.test(c.from));
+  const marks = changes
+    .filter((c) => !/\d/.test(c.from))
+    .map((c) => `“${c.from}”`);
+  const notes = [
+    numbers && "The Library writes numbers out in words.",
+    marks.length && `It has no ${marks.join(" ")}.`,
+  ].filter(Boolean);
+  return `${notes.join(" ")} It writes your text as “${text}”.`;
 }

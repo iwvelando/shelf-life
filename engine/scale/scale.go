@@ -1,20 +1,21 @@
 // Package scale performs the arithmetic of the incomprehensible.
 //
 // The Library of Babel — the hell of Steven L. Peck's *A Short Stay in Hell* —
-// holds every possible book. That count (~10^1,834,097) cannot be stored in any
+// holds every possible book. That count (~10^1,918,666) cannot be stored in any
 // float64 or int128 the machine has. So nearly everything here is reasoned about
 // in base-10 logarithms: a "Log" value x stands in for the number 10^x. Addition
 // of logs is multiplication of the numbers; subtraction is division. The whole
 // point of the experience lives in this trick — you can multiply your effort by
-// a billion (add 9 to a log) and watch a 1.8-million-digit exponent shrug it off.
+// a billion (add 9 to a log) and watch a 1.9-million-digit exponent shrug it off.
 package scale
 
 import "math"
 
-// Library dimensions, following Borges as Peck does: an alphabet of 25
-// orthographic symbols arranged 80 to a line, 40 lines to a page, 410 pages.
+// Library dimensions, following Borges as Peck does, 80 characters to a line,
+// 40 lines to a page, 410 pages, but with an alphabet of all 26 letters, the
+// space, the comma, and the period.
 const (
-	Charset      = 25
+	Charset      = 29
 	LineLength   = 80
 	LinesPerPage = 40
 	Pages        = 410

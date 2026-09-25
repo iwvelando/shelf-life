@@ -16,13 +16,13 @@ func TestCharsPerBook(t *testing.T) {
 }
 
 func TestLog10Books(t *testing.T) {
-	// 25 symbols, 1,312,000 positions => 25^1,312,000.
-	got := Log10Books(25, 1_312_000)
-	want := 1_312_000 * math.Log10(25) // ~1,834,097.29
+	// 29 symbols, 1,312,000 positions => 29^1,312,000.
+	got := Log10Books(29, 1_312_000)
+	want := 1_312_000 * math.Log10(29) // ~1,918,666.17
 	if math.Abs(got-want) > 1e-6 {
 		t.Fatalf("Log10Books = %.6f, want %.6f", got, want)
 	}
-	if got < 1_834_000 || got > 1_835_000 {
+	if got < 1_918_000 || got > 1_919_000 {
 		t.Fatalf("Log10Books magnitude off: %.2f", got)
 	}
 }
@@ -54,7 +54,7 @@ func TestTimeConversions(t *testing.T) {
 }
 
 func TestExaminedFractionLog(t *testing.T) {
-	// Having checked 10^5 of 10^1,834,097 leaves the fraction astronomically tiny.
+	// Having checked 10^5 of 10^1,918,666 leaves the fraction astronomically tiny.
 	frac := ExaminedFractionLog(5, 1_834_097.29)
 	if math.Abs(frac-(5-1_834_097.29)) > 1e-6 {
 		t.Fatalf("ExaminedFractionLog = %.4f", frac)

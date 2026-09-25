@@ -17,16 +17,15 @@ type Change struct {
 	To   string `json:"to"`
 }
 
-// The alphabet has no w, x, y, or z, and no digits. These stand in for them.
+// The alphabet has no digits and only three marks. These stand in for the rest.
 var respell = map[rune]string{
-	'w': "uu", 'x': "cs", 'y': "i", 'z': "s",
-	'0': "sero", '1': "one", '2': "tuuo", '3': "three", '4': "four",
-	'5': "five", '6': "sics", '7': "seven", '8': "eight", '9': "nine",
+	'0': "zero", '1': "one", '2': "two", '3': "three", '4': "four",
+	'5': "five", '6': "six", '7': "seven", '8': "eight", '9': "nine",
 	'!': ".", '?': ".", ';': ",", ':': ",",
 }
 
-// Spell writes text in the Library's alphabet: lower case, with substitutes for
-// the letters and digits it lacks. Whitespace becomes a space; anything else
+// Spell writes text in the Library's alphabet: lower case, with digits written
+// as words and some marks replaced. Whitespace becomes a space; anything else
 // unspellable is dropped. Each distinct change is reported once, in order.
 func Spell(text string) Spelling {
 	var b strings.Builder

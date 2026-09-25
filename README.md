@@ -10,10 +10,10 @@ This site tries to make you feel that scale by letting you try, and fail. It is 
 
 ## The rooms
 
-- **Look**: the arrival, and the size of the place: 10^1,834,097 books.
+- **Look**: the arrival, and the size of the place: 10^1,918,666 books.
 - **Read**: pull a book and read a real page. Every page has an exact location, and turning the page takes you to the next one in the same book. Now and then a line almost makes sense.
 - **Search**: check shelves for your book. Your tally climbs; the share of the Library you have seen stays at a decimal point followed by 1.8 million zeros.
-- **Find**: type your name, or anything, and get the exact hexagon, wall, shelf, volume, and page where it is written. The address is a 4,468-digit number: the directions are longer than the page.
+- **Find**: type your name, or anything, and get the exact hexagon, wall, shelf, volume, and page where it is written. The address is a 4,675-digit number: the directions are longer than the page.
 - **Reckon**: raise a search party, as large and fast as you like, up to every atom checking a book every Planck instant, and watch the 1.8-million-digit wait lose about 123 digits.
 - **Fall**: climb the rail and let go. You fall for three days, and are remade, and are standing at a rail just like the last one.
 
@@ -23,7 +23,7 @@ See the **[usage guide](docs/usage.md)** for details.
 
 ## How it works
 
-The Library's arithmetic is written in Go and compiled to WebAssembly, running in a browser Web Worker. Numbers too large for any machine type are kept as base-10 logarithms. Pages and locations are two spellings of the same number: an invertible scramble modulo 25^3200 means every page has one address, and any page can be found. React and TypeScript provide the rooms, and hand-drawn SVG provides the galleries. The result is a static website, with no server, account, telemetry, or remote computation.
+The Library's arithmetic is written in Go and compiled to WebAssembly, running in a browser Web Worker. Numbers too large for any machine type are kept as base-10 logarithms. Pages and locations are two spellings of the same number: an invertible scramble modulo 29^3200 means every page has one address, and any page can be found. React and TypeScript provide the rooms, and hand-drawn SVG provides the galleries. The result is a static website, with no server, account, telemetry, or remote computation.
 
 - [The mathematics](docs/mathematics.md): the size of the Library, the page ↔ location mapping, and every stated assumption.
 - [Architecture](docs/architecture.md)
