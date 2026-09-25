@@ -17,22 +17,22 @@ func near(t *testing.T, name string, got, want, tol float64) {
 
 func TestTheLibrary(t *testing.T) {
 	c := Library()
-	near(t, "BooksLog", c.BooksLog, 1_312_000*math.Log10(25), 1e-6)
-	if c.BookDigits != 1_834_098 {
-		t.Errorf("BookDigits = %d, want 1,834,098", c.BookDigits)
+	near(t, "BooksLog", c.BooksLog, 1_312_000*math.Log10(29), 1e-6)
+	if c.BookDigits != 1_918_667 {
+		t.Errorf("BookDigits = %d, want 1,918,667", c.BookDigits)
 	}
-	if !strings.Contains(c.BooksText, "× 10^1,834,097") {
+	if !strings.Contains(c.BooksText, "× 10^1,918,666") {
 		t.Errorf("BooksText = %q", c.BooksText)
 	}
 	near(t, "HexagonsLog", c.HexagonsLog, c.BooksLog-math.Log10(640), 1e-9)
 	// Packed into a cube, the side is the cube root of the hexagon count.
 	near(t, "CubeSideHexagonsLog", c.CubeSideHexagonsLog, c.HexagonsLog/3, 1e-9)
-	if !strings.Contains(c.CubeSideHexagonsText, "10^611,364") {
+	if !strings.Contains(c.CubeSideHexagonsText, "10^639,554") {
 		t.Errorf("CubeSideHexagonsText = %q", c.CubeSideHexagonsText)
 	}
 	// Three metres a gallery, against an 8.8e26 m observable universe.
 	near(t, "CubeSideUniversesLog", c.CubeSideUniversesLog, c.CubeSideHexagonsLog+math.Log10(3)-math.Log10(8.8e26), 1e-9)
-	if c.HexagonDigits != 4468 || c.PageChars != 3200 {
+	if c.HexagonDigits != 4675 || c.PageChars != 3200 {
 		t.Errorf("address figures = %d digits, %d chars", c.HexagonDigits, c.PageChars)
 	}
 }
@@ -63,9 +63,9 @@ func TestReckonMatchesTheTerminalScenarios(t *testing.T) {
 
 func TestEverythingBarelyMovesTheExponent(t *testing.T) {
 	// Every atom checking a book every Planck instant still leaves a
-	// 1.83-million-digit wait.
+	// 1.9-million-digit wait.
 	r, _ := Reckon(Effort{SearchersLog: 80, RateLog: 43.27, YearsLog: 100})
-	if !strings.Contains(r.SecondsText, "10^1,83") {
+	if !strings.Contains(r.SecondsText, "10^1,918,5") {
 		t.Fatalf("SecondsText = %q", r.SecondsText)
 	}
 	if r.DigitsRemoved/float64(Library().BookDigits) > 1e-4 {
@@ -122,11 +122,11 @@ func TestSearch(t *testing.T) {
 	if r.ExaminedText != "10,000" {
 		t.Errorf("ExaminedText = %q", r.ExaminedText)
 	}
-	// 10^4 of 10^1,834,097.29 books, in percent: 10^-1,834,091.29.
-	if r.FractionZeros != 1_834_091 {
+	// 10^4 of 10^1,918,666.17 books, in percent: 10^-1,918,660.17.
+	if r.FractionZeros != 1_918_660 {
 		t.Errorf("FractionZeros = %d", r.FractionZeros)
 	}
-	if r.FractionText != "0.000000000000…(1,834,091 zeros)…1" {
+	if r.FractionText != "0.000000000000…(1,918,660 zeros)…1" {
 		t.Errorf("FractionText = %q", r.FractionText)
 	}
 	if _, err := Search(0); err == nil {

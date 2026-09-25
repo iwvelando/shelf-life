@@ -2,7 +2,7 @@
 
 ## Intent
 
-Shelf Life is an interactive homage to Steven L. Peck's novella _A Short Stay in Hell_ (2009), itself built on Borges' _The Library of Babel_. Its one job is to make a visitor _feel_ a number the mind cannot hold: the Library's ~10^1,834,097 books. Every room lets the visitor act (read, search, find, reckon, fall) and watch the Library not notice. It began as a terminal program; the website is its successor.
+Shelf Life is an interactive homage to Steven L. Peck's novella _A Short Stay in Hell_ (2009), itself built on Borges' _The Library of Babel_. Its one job is to make a visitor _feel_ a number the mind cannot hold: the Library's ~10^1,918,666 books. Every room lets the visitor act (read, search, find, reckon, fall) and watch the Library not notice. It began as a terminal program; the website is its successor.
 
 It is an homage, not an adaptation. It contains no text from the novella or from Borges. Keep all prose original, keep the credit to Peck and Borges visible, and don't claim details of Peck's hell that the book doesn't give; state assumptions (gallery height, terminal velocity) as assumptions.
 
@@ -18,7 +18,7 @@ If codebase-memory-mcp is available, prefer `search_graph`, `trace_path`, `get_c
 - `engine/api` is the only request/response surface; `cmd/wasm` is transport only. Keep `web/types.ts` synchronized with the Go JSON fields.
 - **The Library's layout is fixed.** `engine/library` maps each location to exactly one page and back. Changing the alphabet, geometry, scramble, or the labels its constants derive from moves every page in the Library, so a visitor's found page would no longer be at the address they were given. `TestTheFirstPageNeverMoves` guards this; update it only for a deliberate, documented relayout.
 - Every page shown is the real page at the location shown, including teaser pages: they are built, then located. Never display text at an address that doesn't hold it.
-- The alphabet has 25 symbols (`a`–`v`, space, comma, period). Text a visitor enters is spelled into it and the changes are shown, never silently. Teaser lines in `web/teasers.json` must be written in the alphabet already; the WASM bridge test enforces it.
+- The alphabet has 29 symbols (`a`–`z`, space, comma, period): Borges' three marks with the whole alphabet, not his 22 unnamed letters, so a visitor's words are found as written. Digits and other marks a visitor enters are spelled into it and the changes are shown, never silently. Teaser lines in `web/teasers.json` must be written in the alphabet already; the WASM bridge test enforces it.
 - Keep computation in the browser worker. Do not introduce a server, accounts, or remote data collection. The stay persists only in the visitor's own browser storage, and storage denial must not break the site.
 - Theme defaults to the live system preference. Explicit choices persist locally.
 - Respect `prefers-reduced-motion`: the fall plays instantly and the shaft stops breathing.

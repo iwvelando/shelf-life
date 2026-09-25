@@ -12,7 +12,7 @@ test("the rooms work in WebKit on a phone", async ({ page }) => {
   await expect(page.locator("#search-fraction")).toContainText("zeros");
   await page.getByLabel("Text to find").fill("Wyatt");
   await page.getByRole("button", { name: "Find it" }).click();
-  await expect(page.locator("#find-page mark")).toHaveText("uuiatt");
+  await expect(page.locator("#find-page mark")).toHaveText("wyatt");
   await page.getByRole("button", { name: /A billion searchers/ }).click();
   await expect(page.locator("#reckon-removed")).toContainText("18");
   await page.getByRole("button", { name: "Let go" }).click();

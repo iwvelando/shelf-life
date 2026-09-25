@@ -1,11 +1,11 @@
 // Package library lays out the Library of Babel, after Borges and after the hell
 // of Steven L. Peck's *A Short Stay in Hell*: every possible page of 40 lines of
-// 80 characters, drawn from 25 symbols, shelved in hexagonal galleries.
+// 80 characters, drawn from 29 symbols, shelved in hexagonal galleries.
 //
 // Nothing is stored. A page's location and its text are two spellings of the
 // same number: Location folds (hexagon, wall, shelf, volume, page) into one
-// integer, and an invertible scramble modulo 25^3200 turns that integer into the
-// page's 3,200 base-25 digits. So every page has exactly one location, every
+// integer, and an invertible scramble modulo 29^3200 turns that integer into the
+// page's 3,200 base-29 digits. So every page has exactly one location, every
 // location in range has exactly one page, and either can be computed from the
 // other. That is also the cruelty of it: the hexagon number needed to find a page
 // is longer than the page.
@@ -25,9 +25,14 @@ import (
 	"sync"
 )
 
-// Alphabet is Borges' set of 25 orthographic symbols: 22 letters, the space, the
-// comma, and the period. Every page is written in these and only these.
-const Alphabet = "abcdefghijklmnopqrstuv ,."
+// Alphabet is the Library's 29 symbols: the 26 letters, the space, the comma,
+// and the period. Borges gave his Library 22 letters and never said which; this
+// one has them all, so a visitor's own words need no respelling. Every page is
+// written in these and only these.
+const Alphabet = "abcdefghijklmnopqrstuvwxyz ,."
+
+// base is the number of symbols: a page is a PageChars-digit number in this base.
+const base = len(Alphabet)
 
 // Page and gallery geometry. Four of each hexagon's six walls hold shelves.
 const (
@@ -43,7 +48,7 @@ const (
 	PagesPerHexagon = BooksPerHexagon * Pages
 
 	// HexagonDigits is the length of the largest hexagon number, in decimal.
-	HexagonDigits = 4468
+	HexagonDigits = 4675
 )
 
 // Location is where a page is shelved. All fields are zero-based.
@@ -104,7 +109,7 @@ func (l *Location) UnmarshalJSON(b []byte) error {
 // ParseHexagon reads a hexagon number: decimal digits only, within the Library.
 func ParseHexagon(s string) (*big.Int, error) {
 	if s == "" || len(s) > HexagonDigits+64 {
-		return nil, errors.New("a hexagon number is between 1 and 4,468 digits")
+		return nil, errors.New("a hexagon number is between 1 and 4,675 digits")
 	}
 	for i := 0; i < len(s); i++ {
 		if s[i] < '0' || s[i] > '9' {
@@ -121,7 +126,7 @@ func ParseHexagon(s string) (*big.Int, error) {
 // ---- the scramble -----------------------------------------------------------
 
 type layout struct {
-	n        *big.Int // 25^3200: the number of distinct pages
+	n        *big.Int // 29^3200: the number of distinct pages
 	maxHex   *big.Int
 	a1, b1   *big.Int
 	a2, b2   *big.Int
@@ -135,7 +140,7 @@ var (
 
 func get() *layout {
 	layoutOnce.Do(func() {
-		n := new(big.Int).Exp(big.NewInt(25), big.NewInt(PageChars), nil)
+		n := new(big.Int).Exp(big.NewInt(int64(base)), big.NewInt(PageChars), nil)
 		lib = layout{n: n}
 		lib.maxHex = new(big.Int).Div(new(big.Int).Sub(n, big.NewInt(1)), big.NewInt(PagesPerHexagon))
 		lib.a1, lib.a1i = unit(n, "multiplier/1")
@@ -157,10 +162,11 @@ func constant(n *big.Int, label string) *big.Int {
 	return new(big.Int).Mod(new(big.Int).SetBytes(buf), n)
 }
 
-// unit derives a constant that is invertible modulo n = 25^k (not a multiple of 5).
+// unit derives a constant that is invertible modulo n = 29^k: since 29 is
+// prime, that is any constant not a multiple of 29.
 func unit(n *big.Int, label string) (*big.Int, *big.Int) {
 	a := constant(n, label)
-	for new(big.Int).Mod(a, big.NewInt(5)).Sign() == 0 {
+	for new(big.Int).Mod(a, big.NewInt(int64(base))).Sign() == 0 {
 		a.Add(a, big.NewInt(1))
 	}
 	return a, new(big.Int).ModInverse(a, n)
@@ -169,9 +175,9 @@ func unit(n *big.Int, label string) (*big.Int, *big.Int) {
 // MaxHexagon is the number of the last hexagon (zero-based).
 func MaxHexagon() *big.Int { return new(big.Int).Set(get().maxHex) }
 
-// digits25 renders x as exactly PageChars base-25 digits, most significant first.
-func digits25(x *big.Int) []byte {
-	s := x.Text(25)
+// digits renders x as exactly PageChars base-29 digits, most significant first.
+func digits(x *big.Int) []byte {
+	s := x.Text(base)
 	out := make([]byte, PageChars)
 	pad := PageChars - len(s)
 	for i := range out {
@@ -191,14 +197,15 @@ func digitValue(c byte) byte {
 	return c - 'a' + 10
 }
 
-const digitChars = "0123456789abcdefghijklmno"
+// digitChars are big.Int's digit characters for bases up to 36.
+const digitChars = "0123456789abcdefghijklmnopqrstuvwxyz"
 
-func fromDigits25(d []byte) *big.Int {
+func fromDigits(d []byte) *big.Int {
 	s := make([]byte, len(d))
 	for i, v := range d {
 		s[i] = digitChars[v]
 	}
-	x, _ := new(big.Int).SetString(string(s), 25)
+	x, _ := new(big.Int).SetString(string(s), base)
 	return x
 }
 
@@ -226,16 +233,16 @@ func unaffine(ai, x, b, n *big.Int) *big.Int {
 // every digit of the slot: an affine map, a digit reversal, and another affine map.
 func scramble(slot *big.Int) []byte {
 	l := get()
-	d := digits25(affine(l.a1, slot, l.b1, l.n))
+	d := digits(affine(l.a1, slot, l.b1, l.n))
 	reverse(d)
-	return digits25(affine(l.a2, fromDigits25(d), l.b2, l.n))
+	return digits(affine(l.a2, fromDigits(d), l.b2, l.n))
 }
 
 func unscramble(page []byte) *big.Int {
 	l := get()
-	d := digits25(unaffine(l.a2i, fromDigits25(page), l.b2, l.n))
+	d := digits(unaffine(l.a2i, fromDigits(page), l.b2, l.n))
 	reverse(d)
-	return unaffine(l.a1i, fromDigits25(d), l.b1, l.n)
+	return unaffine(l.a1i, fromDigits(d), l.b1, l.n)
 }
 
 // ---- locations and pages ----------------------------------------------------
@@ -355,8 +362,9 @@ func noise(r io.Reader, n int) []byte {
 			panic("library: randomness source failed: " + err.Error())
 		}
 		for _, b := range buf {
-			if b < 250 && len(out) < n {
-				out = append(out, Alphabet[b%25])
+			// Bytes past the last whole multiple of base would favour the first symbols.
+			if int(b) < 256/base*base && len(out) < n {
+				out = append(out, Alphabet[int(b)%base])
 			}
 		}
 	}

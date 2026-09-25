@@ -26,5 +26,5 @@ export function duration(seconds: number) {
   return rest ? `${out}, ${plural(rest, nextUnit)}` : out;
 }
 
-// A power of ten written the way the engine writes large exponents: 10^1,834,097.
+// A power of ten written the way the engine writes large exponents: 10^1,918,666.
 export const power = (log: number) => `10^${commas(Math.floor(log))}`;
