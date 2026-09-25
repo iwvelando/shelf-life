@@ -28,3 +28,6 @@ CLAUDE.local.md
 # Claude Code runtime state
 .claude/scheduled_tasks.lock
 .claude/settings.local.json
+
+# Generated from the Go engine at build time.
+web/generated/

@@ -1,0 +1,784 @@
+/* Shelf Life. The galleries' light has no source: flat, faintly green, on stone.
+   Book cloth (oxblood) and dull gilt are the only colours with warmth; gilt
+   marks what can be pressed. Dark is the Library's own light; light is the
+   same place on grey paper. */
+
+:root {
+  --stone: #2a302c;
+  --rail: #252a27;
+  --shaft: #151a17;
+  --page: #212622;
+  --vellum: #d6d3c4;
+  --ash: #8b928a;
+  --oxblood: #6e3434;
+  --cloth-brown: #4d4034;
+  --cloth-green: #37463b;
+  --gilt: #b39a5c;
+  --on-gilt: #151a17;
+  --line: color-mix(in srgb, var(--vellum) 16%, transparent);
+
+  --serif:
+    "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua",
+    "URW Palladio L", Georgia, serif;
+  --mono:
+    ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --stone: #d9d8cf;
+    --rail: #d0cfc5;
+    --shaft: #3e4540;
+    --page: #e7e5dc;
+    --vellum: #23282a;
+    --ash: #5a615a;
+    --oxblood: #7d3a3a;
+    --cloth-brown: #6b5847;
+    --cloth-green: #4f6153;
+    --gilt: #75602a;
+    --on-gilt: #f1efe7;
+    color-scheme: light;
+  }
+}
+
+:root[data-theme="light"] {
+  --stone: #d9d8cf;
+  --rail: #d0cfc5;
+  --shaft: #3e4540;
+  --page: #e7e5dc;
+  --vellum: #23282a;
+  --ash: #5a615a;
+  --oxblood: #7d3a3a;
+  --cloth-brown: #6b5847;
+  --cloth-green: #4f6153;
+  --gilt: #75602a;
+  --on-gilt: #f1efe7;
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--stone);
+  color: var(--vellum);
+  font-family: var(--serif);
+  font-size: 1.125rem;
+  line-height: 1.65;
+  font-variant-numeric: lining-nums;
+}
+
+a {
+  color: inherit;
+  text-decoration-color: var(--gilt);
+  text-underline-offset: 0.2em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--gilt);
+  outline-offset: 3px;
+}
+
+/* ---- frame ---------------------------------------------------------------- */
+
+.app {
+  display: grid;
+  grid-template-columns: 14rem minmax(0, 1fr);
+}
+
+.rail {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 1.5rem 1.25rem;
+  background: var(--rail);
+  border-right: 1px solid var(--line);
+}
+
+.masthead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1.2rem;
+  text-decoration: none;
+  letter-spacing: 0.01em;
+}
+
+.dock {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+nav a {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.45rem 0.5rem;
+  border-radius: 3px;
+  text-decoration: none;
+  color: var(--ash);
+}
+
+nav a:hover {
+  color: var(--vellum);
+  background: color-mix(in srgb, var(--vellum) 6%, transparent);
+}
+
+.glyph {
+  width: 1.3rem;
+  height: 1.3rem;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.hud {
+  display: grid;
+  gap: 0.2rem;
+  font-size: 0.9rem;
+  color: var(--ash);
+  text-decoration: none;
+}
+
+.hud > span > span:last-child {
+  color: var(--vellum);
+}
+
+main {
+  width: 100%;
+  max-width: 46rem;
+  padding: 0 2.5rem 6rem;
+  margin: 0 auto;
+}
+
+.room {
+  padding-block: 4.5rem 1rem;
+  scroll-margin-top: 0.5rem;
+}
+
+.room > p,
+.found > p,
+footer p {
+  max-width: 62ch;
+}
+
+h1,
+h2 {
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+h1 {
+  font-size: clamp(2.75rem, 9vw, 4.75rem);
+  margin: 1.5rem 0 1.5rem;
+}
+
+h2 {
+  font-size: 1.9rem;
+  margin: 0 0 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+/* Each room is one more gallery: a small hexagon before its name. */
+h2::before {
+  content: "";
+  width: 0.8rem;
+  height: 0.7rem;
+  flex: none;
+  background: var(--gilt);
+  clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+}
+
+.aside,
+.caption,
+.loading {
+  color: var(--ash);
+  font-style: italic;
+}
+
+.caption {
+  font-size: 0.95rem;
+}
+
+/* Figures can outrun a phone's width ("0.000000000000…(1,834,091 zeros)…1"), so
+   they may break anywhere rather than push the page sideways. */
+.figure {
+  overflow-wrap: anywhere;
+}
+
+.returning {
+  font-style: italic;
+  font-size: 1.3rem;
+}
+
+.view {
+  min-height: 5.5em;
+  border-left: 2px solid var(--line);
+  padding-left: 1rem;
+}
+
+footer {
+  margin-top: 5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+  color: var(--ash);
+  font-size: 0.95rem;
+}
+
+footer p:last-child {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+}
+
+/* ---- controls ------------------------------------------------------------- */
+
+button {
+  font: inherit;
+  font-size: 1rem;
+  min-height: 2.75rem;
+  padding: 0.55rem 1.15rem;
+  border: 1px solid var(--gilt);
+  border-radius: 2px;
+  background: var(--gilt);
+  color: var(--on-gilt);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+button:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+button.secondary {
+  background: transparent;
+  color: var(--vellum);
+}
+
+button.quiet {
+  min-height: 0;
+  padding: 0.2rem 0;
+  border: 0;
+  background: none;
+  color: var(--ash);
+  text-decoration: underline;
+  text-decoration-color: var(--gilt);
+  text-underline-offset: 0.2em;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-block: 1.25rem;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-block: 1.25rem;
+}
+
+button.chip {
+  min-height: 2.5rem;
+  padding: 0.4rem 0.8rem;
+  border-color: var(--line);
+  background: transparent;
+  color: var(--vellum);
+  font-size: 0.92rem;
+  text-align: left;
+}
+
+button.chip[aria-pressed="true"] {
+  border-color: var(--gilt);
+  background: color-mix(in srgb, var(--gilt) 18%, transparent);
+}
+
+.dials {
+  display: grid;
+  gap: 1.1rem;
+  margin-block: 1.5rem;
+}
+
+.dial {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.2rem 1rem;
+}
+
+.dial label {
+  font-size: 0.95rem;
+}
+
+.dial output {
+  color: var(--ash);
+  font-size: 0.95rem;
+  text-align: right;
+}
+
+.dial input {
+  grid-column: 1 / -1;
+  width: 100%;
+  accent-color: var(--gilt);
+  min-height: 2rem;
+}
+
+.find-form {
+  display: grid;
+  gap: 0.75rem;
+  margin-block: 1.25rem;
+}
+
+textarea {
+  font: inherit;
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--page);
+  color: var(--vellum);
+  resize: vertical;
+}
+
+fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.5rem;
+}
+
+legend {
+  padding: 0;
+  margin-bottom: 0.3rem;
+  color: var(--ash);
+  font-size: 0.95rem;
+  width: 100%;
+}
+
+fieldset label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.5rem;
+}
+
+input[type="radio"] {
+  accent-color: var(--gilt);
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.find-form button {
+  justify-self: start;
+}
+
+[role="alert"] {
+  border-left: 3px solid var(--oxblood);
+  padding-left: 0.9rem;
+}
+
+/* ---- figures and pages ---------------------------------------------------- */
+
+.figures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 1rem 2rem;
+  margin: 1.5rem 0;
+}
+
+.figures dt {
+  color: var(--ash);
+  font-size: 0.9rem;
+}
+
+.figures dd {
+  margin: 0.1rem 0 0;
+  font-size: 1.3rem;
+  overflow-wrap: anywhere;
+}
+
+.delta {
+  color: var(--ash);
+  font-size: 0.95rem;
+}
+
+.location {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem 1.5rem;
+  margin: 1.5rem 0 1rem;
+}
+
+.location dt {
+  color: var(--ash);
+  font-size: 0.85rem;
+}
+
+.location dd {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.location-hexagon {
+  grid-column: 1 / -1;
+}
+
+.hexagon {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  word-break: break-all;
+  max-height: 4.5em;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, #000 40%, transparent);
+  mask-image: linear-gradient(to bottom, #000 40%, transparent);
+}
+
+.hexagon.is-open {
+  max-height: none;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+.page {
+  container-type: inline-size;
+  margin: 1rem 0;
+  padding: clamp(0.6rem, 3vw, 1.5rem);
+  background: var(--page);
+  border: 1px solid var(--line);
+  box-shadow:
+    inset 0 0 0 4px var(--page),
+    inset 0 0 0 5px var(--line);
+}
+
+.page-text {
+  font-family: var(--mono);
+  /* 80 columns of a ~0.6em-wide monospace face, with a little slack. */
+  font-size: min(0.9rem, 100cqi / 49.5);
+  line-height: 1.4;
+  overflow-x: auto;
+}
+
+.page-line {
+  display: block;
+  white-space: pre;
+}
+
+mark {
+  background: var(--gilt);
+  color: var(--on-gilt);
+}
+
+/* ---- drawings ------------------------------------------------------------- */
+
+.arrival {
+  padding-top: 2.5rem;
+}
+
+.shaft {
+  display: block;
+  width: min(100%, 30rem);
+  height: auto;
+  aspect-ratio: 1;
+}
+
+.gallery-floor {
+  fill: var(--shaft);
+  fill-opacity: 0.16;
+}
+
+.gallery-books {
+  fill: none;
+  stroke: var(--ash);
+  stroke-width: 0.7;
+}
+
+.gallery-rail {
+  fill: none;
+  stroke: var(--vellum);
+  stroke-width: 1;
+  stroke-opacity: 0.8;
+}
+
+.shaft-void {
+  fill: var(--shaft);
+}
+
+.shaft-breathe {
+  animation: breathe 16s ease-in-out infinite alternate;
+}
+
+@keyframes breathe {
+  to {
+    transform: scale(1.06) rotate(0.5deg);
+  }
+}
+
+.tunnel {
+  width: min(100%, 22rem);
+  margin: 1.5rem 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shaft-breathe {
+    animation: none;
+  }
+}
+
+.shelf {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 1.5rem 0 0.5rem;
+}
+
+.spine rect {
+  transition: transform 0.45s cubic-bezier(0.3, 0.7, 0.2, 1);
+}
+
+.spine-0 rect:first-child {
+  fill: var(--oxblood);
+}
+
+.spine-1 rect:first-child {
+  fill: var(--cloth-brown);
+}
+
+.spine-2 rect:first-child {
+  fill: var(--cloth-green);
+}
+
+.spine-band {
+  fill: var(--gilt);
+  opacity: 0.7;
+}
+
+.spine.is-pulled rect {
+  transform: translateY(-26px);
+}
+
+.spine.is-pulled rect:first-child {
+  stroke: var(--gilt);
+  stroke-width: 1.5;
+}
+
+.shelf-plank {
+  fill: var(--shaft);
+}
+
+.never-bar,
+.exponent-bar {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 1.5rem 0 0.5rem;
+}
+
+.bar-track {
+  fill: none;
+  stroke: var(--vellum);
+  stroke-width: 1.5;
+}
+
+.lens {
+  fill: var(--page);
+  stroke: var(--gilt);
+  stroke-width: 2;
+}
+
+.lens-line {
+  fill: none;
+  stroke: var(--ash);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+
+.lens-tick {
+  stroke: var(--vellum);
+  stroke-width: 1.5;
+}
+
+.lens-captions {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  text-align: center;
+  color: var(--ash);
+  font-size: 0.85rem;
+  line-height: 1.35;
+}
+
+.wait {
+  fill: var(--vellum);
+  fill-opacity: 0.8;
+}
+
+.removed {
+  fill: var(--gilt);
+}
+
+.lens-frame {
+  fill: none;
+  stroke: var(--gilt);
+  stroke-width: 1.5;
+}
+
+.fall-lines p {
+  margin: 0.4rem 0;
+  max-width: 62ch;
+}
+
+.tally-figure {
+  margin: 2rem 0 0;
+}
+
+.tally-figure figcaption {
+  color: var(--ash);
+  font-size: 0.9rem;
+  font-style: italic;
+  margin-top: 0.4rem;
+}
+
+.tally {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.6rem;
+}
+
+.tally-group {
+  width: 2.25rem;
+  height: 2.5rem;
+}
+
+.tally-mark {
+  stroke: var(--vellum);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  fill: none;
+}
+
+.tally-more {
+  color: var(--ash);
+  font-size: 0.95rem;
+}
+
+/* ---- phones --------------------------------------------------------------- */
+
+@media (max-width: 52rem) {
+  .app {
+    display: block;
+  }
+
+  .rail {
+    display: contents;
+  }
+
+  .masthead {
+    padding: 0.9rem 16px 0;
+  }
+
+  .dock {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 10;
+    gap: 0;
+    background: var(--rail);
+    border-top: 1px solid var(--line);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .hud {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.35rem 16px 0;
+    font-size: 0.78rem;
+  }
+
+  nav {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0 8px 0.2rem;
+  }
+
+  nav a {
+    flex: 1;
+    flex-direction: column;
+    gap: 0.1rem;
+    padding: 0.35rem 0;
+    font-size: 0.72rem;
+    min-height: 2.75rem;
+  }
+
+  main {
+    padding: 0 16px 9rem;
+  }
+
+  .room {
+    padding-top: 3.5rem;
+  }
+
+  .shaft {
+    margin-inline: auto;
+  }
+
+  .location {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
