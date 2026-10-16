@@ -9,6 +9,8 @@ for (const file of [
   "shelf-life.svg",
   "og-image.png",
   "apple-touch-icon.png",
+  "robots.txt",
+  "sitemap.xml",
   "LICENSE.txt",
   "GO-LICENSE.txt",
   "THIRD-PARTY-NOTICES.txt",

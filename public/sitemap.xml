@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Every room is at one address, the canonical one in index.html. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://shelf-life.isaacvelando.com/</loc>
+  </url>
+</urlset>

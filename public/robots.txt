@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://shelf-life.isaacvelando.com/sitemap.xml

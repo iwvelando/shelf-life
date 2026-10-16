@@ -56,6 +56,8 @@ make share-card     # re-render the link-preview card and home-screen icon into 
 
 A shared link unfurls into a card (Open Graph and Twitter tags in `index.html`) showing `public/og-image.png`. Those tags name the production URL, since link scrapers need absolute URLs. The card and `public/apple-touch-icon.png` are rendered from the built site by `make share-card` and committed; re-render them, check them by eye, and commit when the site's look changes.
 
+Search engines are pointed at the site by `public/robots.txt`, which names `public/sitemap.xml`. The sitemap lists the one canonical address, since every room lives at `/`; give it more entries only if rooms gain their own addresses.
+
 ## Project map
 
 | Location          | Responsibility                                         |
